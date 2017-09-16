@@ -1,0 +1,21 @@
+{
+  "name": "binder-sheets",
+  "homepage": "https://github.com/Friff14/binder-sheets",
+  "authors": [
+    "friff14@gmail.com"
+  ],
+  "description": "",
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-social": "^5.1.1"
+  }
+}
