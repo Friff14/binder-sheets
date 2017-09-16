@@ -1,40 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Binder Sheets</title>
 
+    <!--Google Auth internal functions-->
+    <script src="js/oauth_functions.js"></script>
+
+    <!--Vue framework-->
+    <script src="bower_components/vue/dist/vue.js"></script>
+    <script src="bower_components/vue-router/dist/vue-router.js"></script>
+
+    <!--Vue templates-->
+    <script src="js/vue-templates.js"></script>
+
+    <!--JQuery, Bootstrap, etc-->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-    <script src="bower_components/vue/dist/vue.js"></script>
-
-
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
 
+    <!--Bootstrap Social - for Google login and Youtube button-->
     <link rel="stylesheet" href="bower_components/bootstrap-social/bootstrap-social.css">
 
+    <!--Mobile responsivity-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
+
 <div id="app">
 
-    <!--If they're logged in...-->
-    <div v-if="loggedIn">
-        <div class="container">
-
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button"
+                        class="navbar-toggle collapsed"
+                        data-toggle="collapse"
+                        data-target=""
+                        aria-expanded="false">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand">
+                    Binder Sheets
+                </a>
+            </div>
         </div>
+    </nav>
+
+
+    <!--If they're logged in...-->
+    <div v-if="loggedIn == true">
+
+        <router-view></router-view>
+
     </div>
 
     <!--If they're not logged in...-->
-    <div v-else>
+    <div v-if="loggedIn == false">
         <div class="col-xs-12 col-sm-6 col-sm-offset-3 well">
             <h1 class="text-center">Binder Sheets</h1>
 
             <div class="col-xs-6 col-xs-offset-3">
-                <a class="btn btn-block btn-social btn-facebook">
+                <a class="btn btn-block btn-social btn-facebook" v-on:click="google_sign_in">
                     <span class="fa fa-google"></span> Sign in with Google
                 </a>
                 <a href="" class="btn btn-block btn-social btn-google">
@@ -45,11 +77,30 @@
         </div>
     </div>
 
+    <div v-if="loggedIn == 'loading'">
+        <div class="text-center">
+            <h1>&nbsp;</h1>
+            <span class="fa fa-spinner fa-spin" style="font-size:24px"></span>
+            <p>
+                <b>loading...</b>
+            </p>
+        </div>
+    </div>
+
+
 </div>
+
 
 
 <!--Local vue code-->
 <script src="js/main.js"></script>
+<!--Google Auth-->
+<script src="https://apis.google.com/js/platform.js" async defer
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()"
+></script>
+<meta name="google-signin-client_id"
+      content="327908214436-tota76865ckn40g42kq5349nqs9es06p.apps.googleusercontent.com">
 
 </body>
 </html>
