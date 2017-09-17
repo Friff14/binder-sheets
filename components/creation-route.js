@@ -1,13 +1,15 @@
 let creation_template = `
 <div class="container">
     <div class="col-xs-12">
-        <input
-                type="text"
-                placeholder="Google Sheets URL"
-                id="sheets-url"
-                class="form-control"
-                v-model="sheetsUrl"
-        >
+        <div v-if="!templateObject">
+            <input
+                    type="text"
+                    placeholder="Google Sheets URL"
+                    id="sheets-url"
+                    class="form-control"
+                    v-model="sheetsUrl"
+            >
+        </div>
         <p>
             {{ sheetsUrl }}
         </p>
@@ -20,19 +22,26 @@ const creation_route = {
     data: function(){
         return {
             sheetsUrl: '',
-            rawSheetData: sheet_info
+            rawSheetData: sheet_info,
+            templateObject: null
         }
     },
     watch:{
         sheetsUrl: function(x){
-            console.log("Getting JSON from sheet", x);
-            getJSONFromSheet(x)
+            let that = this;
+
+            that.templateObject = new Template(x);
+        },
+        templateObject: function(x){
+            console.log("doing something", x);
         },
         rawSheetData: function(sheet_info){
             console.log("Sheet data retrieved");
         }
     }
 };
+
+let template_object = null;
 
 const routes = [
     {"path": '/create', component: creation_route}
