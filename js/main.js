@@ -3,7 +3,8 @@
 let app = new Vue({
     el: "#app",
     data: {
-        loggedIn: "loading"
+        loggedIn: "loading",
+        sheetsUrl: "hi"
     },
     methods: {
         google_sign_in: google_sign_in,

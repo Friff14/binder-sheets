@@ -40,4 +40,5 @@ function initClient(){
 
 function updateSigninStatus(isSignedIn){
     app.loggedIn = isSignedIn;
+    console.log("Got past the app.loggedin stuff", isSignedIn);
 }
