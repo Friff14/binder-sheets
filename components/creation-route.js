@@ -19,12 +19,17 @@ const creation_route = {
     template: creation_template,
     data: function(){
         return {
-            sheetsUrl: ''
+            sheetsUrl: '',
+            rawSheetData: sheet_info
         }
     },
     watch:{
         sheetsUrl: function(x){
-            console.log("every breath", x, "takes");
+            console.log("Getting JSON from sheet", x);
+            getJSONFromSheet(x)
+        },
+        rawSheetData: function(sheet_info){
+            console.log("Sheet data retrieved");
         }
     }
 };
