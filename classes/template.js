@@ -2,7 +2,7 @@
  * Created by tannergriffin on 9/17/2017.
  */
 
-class Template {
+class BinderTemplate {
 
     // Google Sheet Information
     // private sheetId = null;
@@ -16,22 +16,37 @@ class Template {
 
     //
 
-    constructor(sheetId) {
-        this.pagesContainer = {
-            "pageList": [],
-            "pageChosen": 0
-        };
-        this.columnsContainer = {
-            "columnsList": [],
-            "columnsSelected": []
-        };
-        this.flags = {
-            "pageDataRetrievalInProgress": false,
-            "pageDataRetrievalCompleted": true
-        };
-        if(sheetId){
-            this.setSheetId(sheetId);
+    constructor(information) {
+        if (typeof information === String || !information) {
+            console.log("Creating from Sheet ID");
+            this.pagesContainer = {
+                "pageList": [],
+                "pageChosen": 0
+            };
+            this.columnsContainer = {
+                "columnsList": [],
+                "columnsSelected": []
+            };
+            this.flags = {
+                "pageDataRetrievalInProgress": false,
+                "pageDataRetrievalCompleted": true,
+                "setupCompleted": false
+            };
+            if (information) {
+                this.setSheetId(information);
+            }
+            this.title = '';
         }
+
+        else {
+            this.pagesContainer = information.pagesContainer;
+            this.columnsContainer = information.columnsContainer;
+            this.flags = information.flags;
+            this.setSheetId(information.sheetId);
+            this.retrievePageData();
+            this.title = information.title;
+        }
+
     }
 
     getSheetId() {
@@ -39,18 +54,24 @@ class Template {
     }
 
     setSheetId(sheetId) {
-        this.sheetId = getGoogleSheetIdFromUrl(sheetId);
+        if(!isUrl(sheetId)){
+            this.sheetId = sheetId
+        }
+        else{
+            this.sheetId = getGoogleSheetIdFromUrl(sheetId);
+        }
+
         this.retrievePageData()
     }
 
     getSheetInfo() {
-        if (this.sheetInfo){
+        if (this.sheetInfo) {
             return this.sheetInfo;
         }
-        else if (this.pageDataRetrievalInProgress){
+        else if (this.pageDataRetrievalInProgress) {
             return this.getSheetInfo();
         }
-        else{
+        else {
             throw "Sheet Info not downloaded."
         }
     }
@@ -58,12 +79,15 @@ class Template {
     setSheetInfo(sheetInfo) {
         this.sheetInfo = sheetInfo;
 
-    //    set page list, column list, n stuff
-        let pages = [];
-        sheetInfo.result.sheets.forEach(page => {
-            pages.push(page.properties.title)
-        });
-        this.setPageList(pages);
+        //    set page list, column list, n stuff
+        //    If it's imported, we don't need to, so don't do it
+        if (!this.flags.setupCompleted) {
+            let pages = [];
+            sheetInfo.result.sheets.forEach(page => {
+                pages.push(page.properties.title)
+            });
+            this.setPageList(pages);
+        }
     }
 
     getPageList() {
@@ -72,7 +96,7 @@ class Template {
 
     setPageList(pageList) {
         this.pagesContainer.pageList = pageList;
-        if (pageList.length == 1){
+        if (pageList.length == 1) {
             this.setPageChosen(0);
         }
     }
@@ -80,6 +104,7 @@ class Template {
     getPageChosen() {
         return this.pagesContainer.pageChosen
     }
+
     setPageChosen(pageChosen) {
         console.log("Choosing page", pageChosen);
         this.pagesContainer.pageChosen = pageChosen;
@@ -87,10 +112,11 @@ class Template {
         this.setGridData(this.sheetInfo.result.sheets[pageChosen])
     }
 
-    getGridData(){
+    getGridData() {
         return this.gridData;
     }
-    setGridData(gridData){
+
+    setGridData(gridData) {
         this.gridData = gridData;
         console.log("Grid data", gridData);
         this.setColumnsList(gridData.data[0].rowData[0].values);
@@ -103,9 +129,9 @@ class Template {
     setColumnsList(columnsList) {
         let columns = [];
         let columnsSelected = [];
-        columnsList.forEach((column, index)=>{
+        columnsList.forEach((column, index) => {
             columns.push(column.formattedValue);
-            if(column.formattedValue != undefined){
+            if (column.formattedValue != undefined) {
                 columnsSelected.push(index);
             }
         });
@@ -143,6 +169,17 @@ class Template {
         else {
             throw "No Sheet ID registered on this template.";
 
+        }
+    }
+
+    exportJSONObject() {
+        return {
+            "pagesContainer": this.pagesContainer,
+            "columnsContainer": this.columnsContainer,
+            "sheetId": this.sheetId,
+            "flags": this.flags,
+            "savedOn": new Date(),
+            "title": this.title
         }
     }
 
