@@ -38,7 +38,6 @@ function getJSONFromSheet(sheet_id) {
     gapi.client.sheets.spreadsheets.get({
         spreadsheetId: sheet_id
     }).then(function (returned_sheet_info) {
-            console.log("Perhaps, ma'am, you should take _my_ carriage");
             sheet_info = returned_sheet_info;
         },
         function (error) {

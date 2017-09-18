@@ -17,8 +17,21 @@ class Template {
     //
 
     constructor(sheetId) {
-        this.setSheetId(sheetId);
-        this.retrievePageData()
+        this.pagesContainer = {
+            "pageList": [],
+            "pageChosen": 0
+        };
+        this.columnsContainer = {
+            "columnsList": [],
+            "columnsSelected": []
+        };
+        this.flags = {
+            "pageDataRetrievalInProgress": false,
+            "pageDataRetrievalCompleted": true
+        };
+        if(sheetId){
+            this.setSheetId(sheetId);
+        }
     }
 
     getSheetId() {
@@ -27,6 +40,7 @@ class Template {
 
     setSheetId(sheetId) {
         this.sheetId = getGoogleSheetIdFromUrl(sheetId);
+        this.retrievePageData()
     }
 
     getSheetInfo() {
@@ -53,20 +67,33 @@ class Template {
     }
 
     getPageList() {
-        return this.pageList;
+        return this.pagesContainer.pageList;
     }
 
     setPageList(pageList) {
-        this.pageList = pageList;
+        this.pagesContainer.pageList = pageList;
+        if (pageList.length == 1){
+            this.setPageChosen(0);
+        }
     }
 
     getPageChosen() {
-        return this.pageChosen
+        return this.pagesContainer.pageChosen
+    }
+    setPageChosen(pageChosen) {
+        console.log("Choosing page", pageChosen);
+        this.pagesContainer.pageChosen = pageChosen;
+        console.log(this.sheetInfo.result.sheets);
+        this.setGridData(this.sheetInfo.result.sheets[pageChosen])
     }
 
-    setPageChosen(pageChosen) {
-        this.pageChosen = pageChosen;
-
+    getGridData(){
+        return this.gridData;
+    }
+    setGridData(gridData){
+        this.gridData = gridData;
+        console.log("Grid data", gridData);
+        this.setColumnsList(gridData.data[0].rowData[0].values);
     }
 
     getColumnsList() {
@@ -74,7 +101,17 @@ class Template {
     }
 
     setColumnsList(columnsList) {
-        this.columnsList = columnsList;
+        let columns = [];
+        let columnsSelected = [];
+        columnsList.forEach((column, index)=>{
+            columns.push(column.formattedValue);
+            if(column.formattedValue != undefined){
+                columnsSelected.push(index);
+            }
+        });
+        this.columnsContainer.columnsList = columns;
+        this.columnsContainer.columnsSelected = columnsSelected;
+        console.log("Columns list", columns);
     }
 
     getPageName() {
@@ -86,16 +123,19 @@ class Template {
 
     retrievePageData() {
         if (this.getSheetId()) {
-            this.pageDataRetrievalInProgress = true;
+            this.flags.pageDataRetrievalInProgress = true;
+            this.flags.pageDataRetrievalCompleted = false;
             let that = this;
             gapi.client.sheets.spreadsheets.get({
-                spreadsheetId: that.getSheetId()
+                spreadsheetId: that.getSheetId(),
+                includeGridData: true
             }).then(function (returned_sheet_info) {
                     that.setSheetInfo(returned_sheet_info);
-                    that.pageDataRetrievalInProgress = false;
+                    that.flags.pageDataRetrievalInProgress = false;
+                    that.flags.pageDataRetrievalCompleted = true;
                 },
                 function (error) {
-                    that.pageDataRetrievalInProgress = false;
+                    that.flags.pageDataRetrievalInProgress = false;
                     console.log("Could not get sheet data", error);
                 }
             )
