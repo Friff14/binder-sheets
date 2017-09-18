@@ -96,7 +96,7 @@ class BinderTemplate {
 
     setPageList(pageList) {
         this.pagesContainer.pageList = pageList;
-        if (pageList.length == 1) {
+        if (pageList.length === 1) {
             this.setPageChosen(0);
         }
     }
@@ -131,7 +131,7 @@ class BinderTemplate {
         let columnsSelected = [];
         columnsList.forEach((column, index) => {
             columns.push(column.formattedValue);
-            if (column.formattedValue != undefined) {
+            if (column.formattedValue !== undefined) {
                 columnsSelected.push(index);
             }
         });
@@ -168,7 +168,6 @@ class BinderTemplate {
         }
         else {
             throw "No Sheet ID registered on this template.";
-
         }
     }
 
