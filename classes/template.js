@@ -36,6 +36,7 @@ class BinderTemplate {
                 this.setSheetId(information);
             }
             this.title = '';
+            this.uniqueID = uuid4();
         }
 
         else {
@@ -45,6 +46,7 @@ class BinderTemplate {
             this.setSheetId(information.sheetId);
             this.retrievePageData();
             this.title = information.title;
+            this.uniqueID = information.uniqueID;
         }
 
     }
@@ -178,7 +180,8 @@ class BinderTemplate {
             "sheetId": this.sheetId,
             "flags": this.flags,
             "savedOn": new Date(),
-            "title": this.title
+            "title": this.title,
+            "uniqueID": this.uniqueID
         }
     }
 

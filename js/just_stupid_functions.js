@@ -34,3 +34,17 @@ function isUrl(url){
     return !!url.match(regex);
 
 }
+
+/*
+ * Source: Jon Surell
+ * https://stackoverflow.com/questions/105034/
+* */
+function uuid4() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
