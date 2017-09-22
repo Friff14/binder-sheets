@@ -18,10 +18,10 @@ let bt_store;
 const DB_NAME = 'test-db';
 const CURRENT_VERSION = 1;
 
-let createDatabase = function(){
+let createDatabase = function () {
     console.log("Creating database");
-    let dbPromise = idb.open(DB_NAME, CURRENT_VERSION, function(returned_db){
-        if(!returned_db.objectStoreNames.contains('binder-template')){
+    let dbPromise = idb.open(DB_NAME, CURRENT_VERSION, function (returned_db) {
+        if (!returned_db.objectStoreNames.contains('binder-template')) {
             bt_store = returned_db.createObjectStore('binder-template', {keyPath: 'id', autoIncrement: true});
             bt_store.createIndex("pagesContainer", "pagesContainer", {});
             bt_store.createIndex("columnsContainer", "columnsContainer", {});
@@ -31,27 +31,63 @@ let createDatabase = function(){
             bt_store.createIndex("title", "title", {});
             bt_store.createIndex("uniqueID", "uniqueID", {});
         }
-    }).then(function(returned_db){
+    }).then(function (returned_db) {
         console.log("Database opened", returned_db);
         db = returned_db;
     })
 };
 
-let saveBinderTemplate = function(bt){
+let saveBinderTemplate = function (bt) {
     console.log("Running save binder template", bt, db);
-    if(db){
-        tx = db.transaction(['binder-template'], 'readwrite');
-        bt_store = tx.objectStore('binder-template');
-        let request = bt_store.add(bt);
-        request.onerror = function(e){
-            console.log("Error", e.target.error.name);
-        };
-        request.onsuccess = function(){
-            console.log("Success!")
-        };
-        return tx.complete;
+
+    if (db) {
+        // Handle if the binder template has already been saved
+        let is_already_saved = false;
+        if (is_already_saved) {
+            tx = db.transaction(['binder-template'], 'readwrite');
+            bt_store = tx.objectStore('binder-template');
+        }
+        else {
+            tx = db.transaction(['binder-template'], 'readwrite');
+            bt_store = tx.objectStore('binder-template');
+            let request = bt_store.add(bt);
+            request.onerror = function (e) {
+                console.log("Error", e.target.error.name);
+            };
+            request.onsuccess = function () {
+                console.log("Success!")
+            };
+            return tx.complete;
+        }
+
     }
-    else{
+    else {
+        throw "Database Not Connected"
+    }
+};
+
+
+let getBinderTemplateList = function () {
+    console.log("Getting binder template list");
+    if (db) {
+        //    Get the full list of binder templates and return them as objects
+        let tx = db.transaction(['binder-template'], 'readonly');
+        let store = tx.objectStore('binder-template');
+
+        return store.getAll();
+    }
+    else {
+        throw "Database Not Connected"
+    }
+};
+let getBinderTemplate = function (id) {
+    console.log("Getting binder template with id", id);
+    if (db) {
+        let tx = db.transaction(['binder-template'], 'readonly');
+        let store = tx.objectStore('binder-template');
+        return store.get(id);
+    }
+    else {
         throw "Database Not Connected"
     }
 };

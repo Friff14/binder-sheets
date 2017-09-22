@@ -44,11 +44,10 @@ class BinderTemplate {
             this.columnsContainer = information.columnsContainer;
             this.flags = information.flags;
             this.setSheetId(information.sheetId);
-            this.retrievePageData();
             this.title = information.title;
             this.uniqueID = information.uniqueID;
+            this.id = information.id;
         }
-
     }
 
     getSheetId() {
@@ -150,6 +149,7 @@ class BinderTemplate {
     }
 
     retrievePageData() {
+        console.log("Retrieving page data", this);
         if (this.getSheetId()) {
             this.flags.pageDataRetrievalInProgress = true;
             this.flags.pageDataRetrievalCompleted = false;
@@ -181,7 +181,8 @@ class BinderTemplate {
             "flags": this.flags,
             "savedOn": new Date(),
             "title": this.title,
-            "uniqueID": this.uniqueID
+            "uniqueID": this.uniqueID,
+            "id": this.id
         }
     }
 

@@ -118,12 +118,20 @@ const creation_route = {
             templateTitle: '',
             pagesContainer: null,
             columnsContainer: null,
-            savedTemplates: getSavedTemplates(),
+            savedTemplates: [],
             flags: {
                 // "pageDataRetrievalInProgress": false
             },
             templateObject: new BinderTemplate()
         }
+    },
+    beforeMount: function(x){
+        let that = this;
+        getBinderTemplateList().then(
+            templateList=>{
+                that.savedTemplates = templateList;
+            }
+        )
     },
     watch: {
         sheetsUrl: function (x) {
@@ -144,15 +152,8 @@ const creation_route = {
         selectColumns: function () {
             console.log("Selecting Columns");
             this.flags.setupCompleted = true;
-            // let saved_templates = store.get("saved_templates");
-            // console.log("SAVED TEMPLATES", saved_templates);
-            // if(!saved_templates){
-            //     saved_templates = [];
-            // }
-            // saved_templates.push(this.templateObject.exportJSONObject());
-            // console.log(saved_templates);
-            // store.set("saved_templates", saved_templates)
 
+            saveBinderTemplate(this.templateObject);
         }
     }
 };
@@ -166,11 +167,3 @@ function getSavedTemplates(index){
         return x;
     }
 }
-
-const routes = [
-    {"path": '/create', component: creation_route}
-];
-
-const router = new VueRouter({
-    routes: routes
-});

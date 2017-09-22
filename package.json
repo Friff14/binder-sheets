@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.html",
   "dependencies": {
+    "cssx": "^5.2.1",
     "idb": "^2.0.3"
   },
   "devDependencies": {},
